@@ -73,8 +73,8 @@ public class SelectorFragment extends Fragment {
                                 Libro libro = adaptador.getItem(id); //Faltaba esta línea
                                 Intent i = new Intent(Intent.ACTION_SEND);
                                 i.setType("text/plain");
-                                i.putExtra(Intent.EXTRA_SUBJECT, libro.titulo);
-                                i.putExtra(Intent.EXTRA_TEXT, libro.urlAudio);
+                                i.putExtra(Intent.EXTRA_SUBJECT, libro.getTitulo());
+                                i.putExtra(Intent.EXTRA_TEXT, libro.getUrlAudio());
                                 startActivity(Intent.createChooser(i, "Compartir"));
                                 break;
                             case 1: //Borrar

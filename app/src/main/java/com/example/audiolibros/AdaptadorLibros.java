@@ -59,9 +59,9 @@ public class AdaptadorLibros extends
     public void onBindViewHolder(final ViewHolder holder, int posicion) {
         Libro libro = listaLibros.get(posicion);
         //holder.portada.setImageResource(libro.recursoImagen);
-        holder.titulo.setText(libro.titulo);
+        holder.titulo.setText(libro.getTitulo());
         Aplicacion aplicacion = (Aplicacion) contexto.getApplicationContext();
-        aplicacion.getLectorImagenes().get(libro.urlImagen,
+        aplicacion.getLectorImagenes().get(libro.getUrlImagen(),
                 new ImageLoader.ImageListener() {
                     @Override public void onResponse(ImageLoader.ImageContainer
                                                              response, boolean isImmediate) {

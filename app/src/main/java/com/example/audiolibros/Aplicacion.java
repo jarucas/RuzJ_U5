@@ -10,6 +10,8 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.List;
 
+import static com.example.audiolibros.LibroKt.ejemploLibros;
+
 public class Aplicacion extends Application {
 
     private List<Libro> listaLibros;
@@ -20,7 +22,7 @@ public class Aplicacion extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        listaLibros = Libro.ejemploLibros();
+        listaLibros = ejemploLibros();
         adaptador = new AdaptadorLibrosFiltro(this, listaLibros);
         colaPeticiones = Volley.newRequestQueue(this);
         lectorImagenes = new ImageLoader(colaPeticiones,

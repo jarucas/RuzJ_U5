@@ -46,11 +46,11 @@ public class AdaptadorLibrosFiltro extends AdaptadorLibros {
         indiceFiltro = new Vector<>();
         for (int i = 0; i < vectorSinFiltro.size(); i++) {
             Libro libro = vectorSinFiltro.get(i);
-            if ((libro.titulo.toLowerCase().contains(busqueda) ||
-                    libro.autor.toLowerCase().contains(busqueda))
-                    && (libro.genero.startsWith(genero))
-                    && (!novedad || (novedad && libro.novedad))
-                    && (!leido || (leido && libro.leido))) {
+            if ((libro.getTitulo().toLowerCase().contains(busqueda) ||
+                    libro.getAutor().toLowerCase().contains(busqueda))
+                    && (libro.getGenero().startsWith(genero))
+                    && (!novedad || (novedad && libro.getNovedad()))
+                    && (!leido || (leido && libro.getLeido()))) {
                 listaLibros.add(libro);
                 indiceFiltro.add(i);
             }
