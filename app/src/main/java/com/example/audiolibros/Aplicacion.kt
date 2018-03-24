@@ -13,7 +13,6 @@ class Aplicacion : Application() {
         private set
     var adaptador: AdaptadorLibrosFiltro? = null
         private set
-
     var colaPeticiones: RequestQueue? = null
         private set
     var lectorImagenes: ImageLoader? = null
@@ -32,7 +31,7 @@ class Aplicacion : Application() {
                         cache.put(url, bitmap)
                     }
 
-                    override fun getBitmap(url: String): Bitmap {
+                    override fun getBitmap(url: String): Bitmap? {
                         return cache.get(url)
                     }
                 })
