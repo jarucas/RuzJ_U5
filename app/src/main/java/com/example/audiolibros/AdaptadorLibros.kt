@@ -13,25 +13,15 @@ import com.android.volley.toolbox.ImageLoader
 
 open class AdaptadorLibros(private val contexto: Context, protected var listaLibros: List<Libro> //Vector con libros a visualizar
 ) : RecyclerView.Adapter<AdaptadorLibros.ViewHolder>() {
-    private val inflador: LayoutInflater      //Crea Layouts a partir del XML
+    private val inflador: LayoutInflater = contexto
+            .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater      //Crea Layouts a partir del XML
     private var onClickListener: View.OnClickListener? = null
     private var onLongClickListener: View.OnLongClickListener? = null
 
-    init {
-        inflador = contexto
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-    }
-
     //Creamos nuestro ViewHolder, con los tipos de elementos a modificar
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var portada: ImageView
-        var titulo: TextView
-
-        init {
-            portada = itemView.findViewById<View>(R.id.portada) as ImageView
-            //portada.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-            titulo = itemView.findViewById<View>(R.id.titulo) as TextView
-        }
+        val portada: ImageView = itemView.findViewById<View>(R.id.portada) as ImageView
+        val titulo: TextView = itemView.findViewById<View>(R.id.titulo) as TextView
     }
 
     // Creamos el ViewHolder con las vista de un elemento sin personalizar
@@ -49,16 +39,16 @@ open class AdaptadorLibros(private val contexto: Context, protected var listaLib
         //holder.portada.setImageResource(libro.recursoImagen);
         holder.titulo.text = titulo
         val aplicacion = contexto.applicationContext as Aplicacion
-        aplicacion.lectorImagenes?.get(urlImagen,
+        aplicacion.lectorImagenes.get(urlImagen,
                 object : ImageLoader.ImageListener {
                     override fun onResponse(response: ImageLoader.ImageContainer, isImmediate: Boolean) {
                         val bitmap = response.bitmap
-                        if (bitmap != null) {
+                        bitmap?.let {
 
-                            holder.portada.setImageBitmap(bitmap)
+                            holder.portada.setImageBitmap(it)
 
                             //Extraemos el color principal de un bitmap
-                            val palette = Palette.from(bitmap).generate()
+                            val palette = Palette.from(it).generate()
                             holder.itemView.setBackgroundColor(palette.getLightMutedColor(0))
                             holder.titulo.setBackgroundColor(palette.getLightVibrantColor(0))
 
@@ -71,13 +61,10 @@ open class AdaptadorLibros(private val contexto: Context, protected var listaLib
                         holder.portada.setImageResource(R.drawable.books)
                     }
                 })
-
     }
 
     // Indicamos el número de elementos de la lista
-    override fun getItemCount(): Int {
-        return listaLibros.size
-    }
+    override fun getItemCount(): Int = listaLibros.size
 
     fun setOnItemClickListener(onClickListener: View.OnClickListener) {
         this.onClickListener = onClickListener

@@ -6,8 +6,7 @@ import java.util.*
 class AdaptadorLibrosFiltro(contexto: Context,
                             private val vectorSinFiltro: MutableList<Libro>// Vector con todos los libros
 ) : AdaptadorLibros(contexto, vectorSinFiltro) {
-    private var indiceFiltro: MutableList<Int>? = null // Índice en vectorSinFiltro de
-    // Cada elemento de listaLibros
+    private lateinit var indiceFiltro: MutableList<Int>
     private var busqueda = ""         // Búsqueda sobre autor o título
     private var genero = ""           // Género seleccionado
     private var novedad = false      // Si queremos ver solo novedades
@@ -47,18 +46,14 @@ class AdaptadorLibrosFiltro(contexto: Context,
                     && (!novedad || novedad && libro.novedad)
                     && (!leido || leido && libro.leido)) {
                 (listaLibros as Vector<Libro>).add(libro)
-                indiceFiltro!!.add(i)
+                indiceFiltro.add(i)
             }
         }
     }
 
-    fun getItem(posicion: Int): Libro {
-        return vectorSinFiltro[indiceFiltro!![posicion]]
-    }
+    fun getItem(posicion: Int): Libro = vectorSinFiltro[indiceFiltro[posicion]]
 
-    override fun getItemId(posicion: Int): Long {
-        return indiceFiltro!![posicion].toLong()
-    }
+    override fun getItemId(posicion: Int): Long = indiceFiltro[posicion].toLong()
 
     fun borrar(posicion: Int) {
         vectorSinFiltro.removeAt(getItemId(posicion).toInt())

@@ -3,9 +3,7 @@ package com.example.audiolibros.fragments
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Fragment
-import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.view.MenuItemCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,11 +13,13 @@ import com.example.audiolibros.AdaptadorLibrosFiltro
 import com.example.audiolibros.Aplicacion
 import com.example.audiolibros.MainActivity
 import com.example.audiolibros.R
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.share
 
 class SelectorFragment : Fragment() {
     private var actividad: Activity? = null
-    private var recyclerView: RecyclerView? = null
-    private var adaptador: AdaptadorLibrosFiltro? = null
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adaptador: AdaptadorLibrosFiltro
     //private Vector<Libro> vectorLibros;
 
     override fun onAttach(actividad: Activity) {
@@ -31,51 +31,41 @@ class SelectorFragment : Fragment() {
     }
 
     override fun onCreateView(inflador: LayoutInflater, contenedor: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val vista = inflador.inflate(R.layout.fragment_selector,
-                contenedor, false)
-        recyclerView = vista.findViewById<View>(
-                R.id.recycler_view) as RecyclerView
-        recyclerView!!.layoutManager = GridLayoutManager(actividad, 2)
-        recyclerView!!.adapter = adaptador
-        adaptador!!.setOnItemClickListener(View.OnClickListener { v ->
+        val vista = inflador.inflate(R.layout.fragment_selector, contenedor, false)
+        recyclerView = vista.findViewById<View>(R.id.recycler_view) as RecyclerView
+        recyclerView.layoutManager = GridLayoutManager(actividad, 2)
+        recyclerView.adapter = adaptador
+        adaptador.setOnItemClickListener(View.OnClickListener { v ->
             (actividad as MainActivity).mostrarDetalle(
-                    adaptador!!.getItemId(
-                            recyclerView!!.getChildAdapterPosition(v)).toInt())
+                    adaptador.getItemId(
+                            recyclerView.getChildAdapterPosition(v)).toInt())
         })
 
-        adaptador!!.setOnItemLongClickListener(View.OnLongClickListener { v ->
-            val id = recyclerView!!.getChildAdapterPosition(v)
+        adaptador.setOnItemLongClickListener(View.OnLongClickListener { v ->
+            val id = recyclerView.getChildAdapterPosition(v)
             val menu = AlertDialog.Builder(actividad)
             val opciones = arrayOf<CharSequence>("Compartir", "Borrar ", "Insertar")
             menu.setItems(opciones) { dialog, opcion ->
                 when (opcion) {
                     0 //Compartir
                     -> {
-                        //Libro libro = vectorLibros.elementAt(id);
-                        val (titulo, _, _, urlAudio) = adaptador!!.getItem(id) //Faltaba esta línea
-                        val i = Intent(Intent.ACTION_SEND)
-                        i.type = "text/plain"
-                        i.putExtra(Intent.EXTRA_SUBJECT, titulo)
-                        i.putExtra(Intent.EXTRA_TEXT, urlAudio)
-                        startActivity(Intent.createChooser(i, "Compartir"))
+                        val (titulo, _, _, urlAudio) = adaptador.getItem(id) //Faltaba esta línea
+                        share(urlAudio, titulo)
                     }
                     1 //Borrar
-                    -> Snackbar.make(v, "¿Estás seguro?", Snackbar.LENGTH_LONG)
-                            .setAction("SI") {
-                                adaptador!!.borrar(id)
-                                adaptador!!.notifyDataSetChanged()
-                            }
-                            .show()
+                    ->
+                        longSnackbar(v, "¿Estás Seguro").setAction("SI") {
+                            adaptador.borrar(id)
+                            adaptador.notifyDataSetChanged()
+                        }
                     2 //Insertar
                     -> {
-                        val posicion = recyclerView!!.getChildLayoutPosition(v)
-                        adaptador!!.insertar(adaptador!!.getItem(posicion))
-                        adaptador!!.notifyDataSetChanged()
-                        Snackbar.make(v, "Libro insertado", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("OK") { }
-                                .show()
+                        val posicion = recyclerView.getChildLayoutPosition(v)
+                        adaptador.insertar(adaptador.getItem(posicion))
+                        adaptador.notifyDataSetChanged()
+                        longSnackbar(v, "Libro insertado").setAction("OK") { }
                     }
-                }//Faltaba esta línea
+                }
             }
             menu.create().show()
             true
@@ -96,8 +86,8 @@ class SelectorFragment : Fragment() {
         searchView.setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
                     override fun onQueryTextChange(query: String): Boolean {
-                        adaptador!!.setBusqueda(query)
-                        adaptador!!.notifyDataSetChanged()
+                        adaptador.setBusqueda(query)
+                        adaptador.notifyDataSetChanged()
                         return false
                     }
 
@@ -108,8 +98,8 @@ class SelectorFragment : Fragment() {
         MenuItemCompat.setOnActionExpandListener(searchItem,
                 object : MenuItemCompat.OnActionExpandListener {
                     override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                        adaptador!!.setBusqueda("")
-                        adaptador!!.notifyDataSetChanged()
+                        adaptador.setBusqueda("")
+                        adaptador.notifyDataSetChanged()
                         return true  // Para permitir cierre
                     }
 

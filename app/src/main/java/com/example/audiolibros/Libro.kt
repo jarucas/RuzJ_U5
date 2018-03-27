@@ -1,9 +1,7 @@
 package com.example.audiolibros
 
-import java.util.ArrayList
-import java.util.Vector
+import java.util.*
 
-const val G_TODOS = "Todos los géneros"
 const val G_EPICO = "Poema épico"
 const val G_S_XIX = "Literatura siglo XIX"
 const val G_SUSPENSE = "Suspense"

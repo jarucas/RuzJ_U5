@@ -17,35 +17,30 @@ import com.example.audiolibros.MainActivity
 import com.example.audiolibros.R
 import java.io.IOException
 
+const val ARG_ID_LIBRO = "id_libro"
+
 class DetalleFragment : Fragment(), View.OnTouchListener, MediaPlayer.OnPreparedListener, MediaController.MediaPlayerControl {
-    internal var mediaPlayer: MediaPlayer? = null
-    internal lateinit var mediaController: MediaController
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var mediaController: MediaController
 
     override fun onCreateView(inflador: LayoutInflater, contenedor: ViewGroup?, savedInstanceState: Bundle?): View? {
         val vista = inflador.inflate(R.layout.fragment_detalle,
                 contenedor, false)
         val args = arguments
-        if (args != null) {
-            val position = args.getInt(ARG_ID_LIBRO)
-            ponInfoLibro(position, vista)
-        } else {
-            ponInfoLibro(0, vista)
-        }
+        val position = args.getInt(ARG_ID_LIBRO)
+        ponInfoLibro(position, vista)
         return vista
     }
 
     override fun onResume() {
-        val detalleFragment = fragmentManager.findFragmentById(R.id.detalle_fragment) as DetalleFragment?
-        if (detalleFragment == null) {
-            (activity as MainActivity).mostrarElementos(false)
-        }
+        (activity as MainActivity).mostrarElementos(false)
         super.onResume()
     }
 
-    private fun ponInfoLibro(id: Int, vista: View?) {
+    private fun ponInfoLibro(id: Int, vista: View) {
         val (titulo, autor, urlImagen, urlAudio) = (activity.application as Aplicacion)
-                .listaLibros!![id]
-        (vista!!.findViewById<View>(R.id.titulo) as TextView).text = titulo
+                .listaLibros[id]
+        (vista.findViewById<View>(R.id.titulo) as TextView).text = titulo
         (vista.findViewById<View>(R.id.autor) as TextView).text = autor
         //((ImageView) vista.findViewById(R.id.portada)).setImageResource(libro.recursoImagen);
         val aplicacion = activity.application as Aplicacion
@@ -53,33 +48,28 @@ class DetalleFragment : Fragment(), View.OnTouchListener, MediaPlayer.OnPrepared
                 urlImagen, aplicacion.lectorImagenes)
 
         vista.setOnTouchListener(this)
-        if (mediaPlayer != null) {
-            mediaPlayer!!.release()
-        }
+
+        //mediaPlayer.release()
         mediaPlayer = MediaPlayer()
-        mediaPlayer!!.setOnPreparedListener(this)
+        mediaPlayer.setOnPreparedListener(this)
         mediaController = MediaController(activity)
         val audio = Uri.parse(urlAudio)
         try {
-            mediaPlayer!!.setDataSource(activity, audio)
-            mediaPlayer!!.prepareAsync()
+            mediaPlayer.setDataSource(activity, audio)
+            mediaPlayer.prepareAsync()
         } catch (e: IOException) {
             Log.e("Audiolibros", "ERROR: No se puede reproducir $audio", e)
         }
 
     }
 
-    fun ponInfoLibro(id: Int) {
-        ponInfoLibro(id, view)
-    }
+    fun ponInfoLibro(id: Int) = ponInfoLibro(id, view)
 
     override fun onPrepared(mediaPlayer: MediaPlayer) {
         Log.d("Audiolibros", "Entramos en onPrepared de MediaPlayer")
         mediaPlayer.start()
         mediaController.setMediaPlayer(this)
-        mediaController.setAnchorView(view!!.findViewById(
-                R.id.fragment_detalle))
-        //        mediaController.setPadding(0, 0, 0, 110);
+        mediaController.setAnchorView(view.findViewById(R.id.fragment_detalle))
         mediaController.isEnabled = true
         mediaController.show()
     }
@@ -92,8 +82,8 @@ class DetalleFragment : Fragment(), View.OnTouchListener, MediaPlayer.OnPrepared
     override fun onStop() {
         mediaController.hide()
         try {
-            mediaPlayer!!.stop()
-            mediaPlayer!!.release()
+            mediaPlayer.stop()
+            mediaPlayer.release()
         } catch (e: Exception) {
             Log.d("Audiolibros", "Error en mediaPlayer.stop()")
         }
@@ -101,56 +91,35 @@ class DetalleFragment : Fragment(), View.OnTouchListener, MediaPlayer.OnPrepared
         super.onStop()
     }
 
-    override fun canPause(): Boolean {
-        return true
-    }
+    override fun canPause(): Boolean = true
 
-    override fun canSeekBackward(): Boolean {
-        return true
-    }
+    override fun canSeekBackward(): Boolean = true
 
-    override fun canSeekForward(): Boolean {
-        return true
-    }
+    override fun canSeekForward(): Boolean = true
 
-    override fun getBufferPercentage(): Int {
-        return 0
-    }
+    override fun getBufferPercentage(): Int = 0
 
     override fun getCurrentPosition(): Int {
         try {
-            return mediaPlayer!!.currentPosition
+            return mediaPlayer.currentPosition
         } catch (e: Exception) {
             return 0
         }
 
     }
 
-    override fun getDuration(): Int {
-        return mediaPlayer!!.duration
-    }
+    override fun getDuration(): Int = mediaPlayer.duration
 
-    override fun isPlaying(): Boolean {
-        return mediaPlayer!!.isPlaying
-    }
+    override fun isPlaying(): Boolean = mediaPlayer.isPlaying
 
-    override fun pause() {
-        mediaPlayer!!.pause()
-    }
+    override fun pause() = mediaPlayer.pause()
 
     override fun seekTo(pos: Int) {
-        mediaPlayer!!.seekTo(pos)
+        mediaPlayer.seekTo(pos)
     }
 
-    override fun start() {
-        mediaPlayer!!.start()
-    }
+    override fun start() = mediaPlayer.start()
 
-    override fun getAudioSessionId(): Int {
-        return 0
-    }
-
-    companion object {
-        var ARG_ID_LIBRO = "id_libro"
-    }
+    override fun getAudioSessionId(): Int = 0
 }
+

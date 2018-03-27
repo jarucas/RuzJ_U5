@@ -9,13 +9,13 @@ import com.android.volley.toolbox.Volley
 
 class Aplicacion : Application() {
 
-    var listaLibros: List<Libro>? = null
+    lateinit var listaLibros: List<Libro>
         private set
-    var adaptador: AdaptadorLibrosFiltro? = null
+    lateinit var adaptador: AdaptadorLibrosFiltro
         private set
-    var colaPeticiones: RequestQueue? = null
+    lateinit var colaPeticiones: RequestQueue
         private set
-    var lectorImagenes: ImageLoader? = null
+    lateinit var lectorImagenes: ImageLoader
         private set
 
     override fun onCreate() {
@@ -31,9 +31,7 @@ class Aplicacion : Application() {
                         cache.put(url, bitmap)
                     }
 
-                    override fun getBitmap(url: String): Bitmap? {
-                        return cache.get(url)
-                    }
+                    override fun getBitmap(url: String): Bitmap? = cache.get(url)
                 })
     }
 
